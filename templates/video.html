@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise Video - Workout Posture Monitor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+    <style>
+        .video-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .back-button {
+            background: #2196F3;
+            margin-bottom: 20px;
+        }
+        
+        .back-button:hover {
+            background: #1976D2;
+        }
+        
+        .mapping-buttons {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .mapping-button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .mapping-button.active {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .mapping-button:not(.active) {
+            background: #666;
+            color: white;
+        }
+
+        #videoFeed {
+            width: 800px;
+            height: 600px;
+            border-radius: 12px;
+            background: #000;
+            margin: 20px 0;
+        }
+        
+        h2 {
+            margin-bottom: 30px;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container video-container">
+        <button class="back-button" onclick="window.location.href='/'">Back to Exercises</button>
+        <h2>{{ workout.capitalize() }} Workout</h2>
+        <div class="mapping-buttons">
+            <button id="2d-button" class="mapping-button" onclick="switchMapping('2d')">2D Mapping</button>
+            <button id="3d-button" class="mapping-button active" onclick="switchMapping('3d')">3D Mapping</button>
+        </div>
+        
+        <div id="status">3D mapping active</div>
+    </div>
+
+    <script>
+        function switchMapping(type) {
+            document.getElementById('2d-button').classList.toggle('active', type === '2d');
+            document.getElementById('3d-button').classList.toggle('active', type === '3d');
+            
+            fetch(`/switch_mapping/${type}/{{ workout }}`)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('status').textContent = type === '2d' ? 
+                        'Press "m" key to activate 2D mapping' : 
+                        '3D mapping active';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('status').textContent = 'Error switching mapping mode';
+                });
+        }
+    </script>
+</body>
+</html>

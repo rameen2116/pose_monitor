@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Workout Posture Monitor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+</head>
+<body>
+  <div class="container">
+    <h1>Workout Posture Monitor</h1>
+    <p>Select an exercise to start monitoring:</p>
+    <div class="button-container">
+      <button onclick="startExercise('legextension')">Leg Extension</button>
+      <button onclick="startExercise('legpress')">Leg Press</button>
+      <button onclick="startExercise('squats')">Squats</button>
+      <button onclick="startExercise('pushups')">Pushups</button>
+    </div>
+    <div class="status" id="status">Status: Waiting for selection...</div>
+  </div>
+
+  <script>
+    function startExercise(exercise) {
+      document.getElementById("status").textContent = `Status: Starting ${exercise} monitoring...`;
+      fetch(`/start/${exercise}`)
+        .then(res => res.text())
+        .then(data => {
+          // Redirect to the video page after starting the exercise
+          window.location.href = `/workout/${exercise}`;
+        })
+        .catch(err => {
+          document.getElementById("status").textContent = "Error starting exercise.";
+          console.error(err);
+        });
+    }
+  </script>
+</body>
+</html>
